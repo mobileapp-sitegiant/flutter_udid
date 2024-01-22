@@ -20,9 +20,16 @@ public class SwiftFlutterUdidPlugin: NSObject, FlutterPlugin {
     private func getUniqueDeviceIdentifierAsString(result: FlutterResult) {
         let bundleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
         let accountName = Bundle.main.bundleIdentifier!
-        
+
+        var vendorId = (UIDevice.current.identifierForVendor?.uuidString)!
+        println("vendorId: \(vendorId)")
+
         var applicationUUID = SAMKeychain.password(forService: bundleName, account: accountName)
-        
+        print("applicationUUID: \(applicationUUID)")
+
+        var uuid: String = NSUUID().UUIDString
+        println("new uuid: \(uuid)")
+
         if applicationUUID == nil {
             
             applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
