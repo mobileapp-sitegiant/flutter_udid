@@ -26,19 +26,17 @@ public class SwiftFlutterUdidPlugin: NSObject, FlutterPlugin {
         let bundleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
         let accountName = Bundle.main.bundleIdentifier!
         
-        // Remove device id stored in keychain
-        let isDeleted = SAMKeychain.deletePassword(forService: bundleName, account: accountName)
+        // Delete device id stored in keychain
+        SAMKeychain.deletePassword(forService: bundleName, account: accountName)
         
-        if(isDeleted){
-            // generate new device id
-            self.getUniqueDeviceIdentifierAsString(result: result);
-        }
+        // generate new device id
+        self.getUniqueDeviceIdentifierAsString(result: result);
+        
     }
     
     private func getUniqueDeviceIdentifierAsString(result: FlutterResult) {
         let bundleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
         let accountName = Bundle.main.bundleIdentifier!
-        
         
         var applicationUUID = SAMKeychain.password(forService: bundleName, account: accountName)
         
