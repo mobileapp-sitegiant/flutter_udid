@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -23,5 +24,16 @@ class FlutterUdid {
     var bytes = utf8.encode(udid);
     var digest = sha256.convert(bytes);
     return digest.toString();
+  }
+
+  /// Delete previous udid stored in keychain and generate and return a new one.
+  /// Currently only implemented on iOS, android is planned in future
+  Future<String> resetUdid() async {
+    if (Platform.isIOS) {
+      final newUuid = await _channel.invokeMethod('resetUDID');
+      return newUuid;
+    }
+
+    return udid;
   }
 }
