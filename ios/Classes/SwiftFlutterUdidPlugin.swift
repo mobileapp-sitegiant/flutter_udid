@@ -3,36 +3,40 @@ import UIKit
 import SAMKeychain
     
 public class SwiftFlutterUdidPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "flutter_udid", binaryMessenger: registrar.messenger())
-    let instance = SwiftFlutterUdidPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if("getUDID"==call.method){
-        self.getUniqueDeviceIdentifierAsString(result: result);
-    }else{
-        result(FlutterMethodNotImplemented);
+    
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(name: "flutter_udid", binaryMessenger: registrar.messenger())
+        let instance = SwiftFlutterUdidPlugin()
+        registrar.addMethodCallDelegate(instance, channel: channel)
     }
-  }
+
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if("getUDID"==call.method){
+            self.getUniqueDeviceIdentifierAsString(result: result);
+        }else{
+            result(FlutterMethodNotImplemented);
+        }
+    }
     
     private func getUniqueDeviceIdentifierAsString(result: FlutterResult) {
         let bundleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
         let accountName = Bundle.main.bundleIdentifier!
 
-        var vendorId = (UIDevice.current.identifierForVendor?.uuidString)!
-        print("vendorId: \(vendorId)")
+        // let vendorId = (UIDevice.current.identifierForVendor?.uuidString)!
 
         var applicationUUID = SAMKeychain.password(forService: bundleName, account: accountName)
-        print("applicationUUID: \(applicationUUID)")
-
-        let uuid = NSUUID().uuidString
-        print("new uuid: \(uuid)")
+        // SAMKeychain.deletePassword(forService: bundleName, account: accountName)
 
         if applicationUUID == nil {
-            
-            applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
+
+            // old method get uuid from identifierForVendor
+            // applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
+
+            // Changed to generate random uuid
+            let uuid = NSUUID().uuidString
+            applicationUUID = uuid
+            print("new uuid: \(uuid)")
+
             let query = SAMKeychainQuery()
             query.service = bundleName
             query.account = accountName
@@ -48,8 +52,8 @@ public class SwiftFlutterUdidPlugin: NSObject, FlutterPlugin {
         
         if(applicationUUID==nil||applicationUUID==""){
             result(FlutterError.init(code: "UNAVAILABLE",
-                                     message: "UDID not available",
-                                     details: nil));
+                                        message: "UDID not available",
+                                        details: nil));
         }else{
             result(applicationUUID)
         }
