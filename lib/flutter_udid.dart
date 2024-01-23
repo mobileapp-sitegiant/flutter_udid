@@ -24,4 +24,13 @@ class FlutterUdid {
     var digest = sha256.convert(bytes);
     return digest.toString();
   }
+
+  Future<bool> resetUdid() async {
+    final result = await _channel.invokeMethod('resetUDID');
+    print('resetUdid result: ${result.toString()}');
+    if (result == true) {
+      return true;
+    }
+    return false;
+  }
 }
