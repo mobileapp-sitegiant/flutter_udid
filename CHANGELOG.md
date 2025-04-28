@@ -1,3 +1,19 @@
+## 4.0.0
+* BREAKING: Linux will always use the id located at /etc/machine-id now, and not use the BIOS UUID due to permission issues
+
+## 3.0.1
+* Upgrade Gradle to 8.12, Android Gradle Plugin to 8.3, Kotlin version to 1.8.22 and Java version to 11
+
+## 3.0.0
+* Add Windows and Linux support
+
+## 2.1.1
+* Remove namespace from AndroidManifest.xml
+
+## 2.1.0
+* Increase minimum flutter version to 3.10.0
+* Cleanup and update gradle files and iOS classes
+
 ## 2.0.1
 * Increase Gradle, Kotlin and compileSdk version
 
