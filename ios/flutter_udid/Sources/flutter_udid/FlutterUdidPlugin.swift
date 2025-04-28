@@ -13,6 +13,8 @@ public class FlutterUdidPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case "getUDID":
       self.getUniqueDeviceIdentifierAsString(result: result);
+    case "resetUDID":
+      self.resetUDID(result: result);
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -26,6 +28,14 @@ public class FlutterUdidPlugin: NSObject, FlutterPlugin {
 
     if applicationUUID == nil {
       applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
+      // original method get uuid from identifierForVendor, which cause duplicate uuid on some devices
+      // applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
+      
+      // Changed to generate random uuid
+      let uuid = NSUUID().uuidString
+      applicationUUID = uuid
+      print("new uuid: \(uuid)")
+
       let query = SAMKeychainQuery()
       query.service = bundleName
       query.account = accountName
@@ -47,4 +57,17 @@ public class FlutterUdidPlugin: NSObject, FlutterPlugin {
       result(applicationUUID)
     }
   }
+
+  private func resetUDID(result: FlutterResult){
+    let bundleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
+    let accountName = Bundle.main.bundleIdentifier!
+    
+    // Delete device id stored in keychain
+    SAMKeychain.deletePassword(forService: bundleName, account: accountName)
+    
+    // generate new device id
+    self.getUniqueDeviceIdentifierAsString(result: result);
+    
+  }
+
 }
